@@ -7,16 +7,15 @@ def normalize_matrix(data):
     return (data-np.nanmin(data))/(np.nanmax(data)-np.nanmin(data))
 
 
-rain = normalize_matrix(np.load('PR_2020.npy'))
-temp = normalize_matrix(np.load('TEMP2m_2020.npy'))
-wind = normalize_matrix(np.load('VU_2020_VV_2020.npy'))
+rain = normalize_matrix(np.load('TutorialDataNCode/PR_2020.npy'))
+temp = normalize_matrix(np.load('TutorialDataNCode/TEMP2m_2020.npy'))
+wind = normalize_matrix(np.load('TutorialDataNCode/VU_2020_VV_2020.npy'))
 
 meteo = np.dstack((rain, temp, wind))
      
 plt.figure(1)
 plt.imshow(meteo)
 plt.title('Lombardy 2020')
-plt.savefig('Figure_4.png', bbox_inches='tight')
+# plt.savefig('Figure_4.png', bbox_inches='tight')
 
 plt.show()
-

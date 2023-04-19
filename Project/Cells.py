@@ -1,55 +1,22 @@
-
 class Cell:
-    def __init__(self, x, y, alive):
+    def __init__(self,x,y,cell_type,vegetobDensity = 0):
         self.x = x
         self.y = y
-        self.alive = alive
-        self.type  = "Cell"
+        self.cell_type = cell_type # water or land
+        self.vegetobDensity = vegetobDensity # 0-100
+        self.herd = []
+        self.pride = []
 
-    def __str__(self):
-        return "Cell at ({}, {}) is {}".format(self.x, self.y, "alive" if self.alive else "dead")
+class Erbast:
+    def __init__(self,energy,lifetime,age,socialAttitude,vegetobDensity = 0):
+        self.energy = energy 
+        self.lifetime = lifetime 
+        self.age = age # 0-lifetime
+        self.socialAttitude = socialAttitude # 0-1
 
-    def __repr__(self):
-        return "Cell at ({}, {}) is {}".format(self.x, self.y, "alive" if self.alive else "dead")
-
-    def __eq__(self, other):
-        return self.x == other.x and self.y == other.y and self.alive == other.alive
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __hash__(self):
-        return hash((self.x, self.y, self.alive))
-
-class Vegetob(Cell):
-    def __init__(self, x, y, alive):
-        super().__init__(x, y, alive)
-        self.type = "Vegetob"
-
-    def __str__(self):
-        return "Vegetob at ({}, {}) is {}".format(self.x, self.y, "alive" if self.alive else "dead")
-
-    def __repr__(self):
-        return "Vegetob at ({}, {}) is {}".format(self.x, self.y, "alive" if self.alive else "dead") 
-
-class Erbast(Cell):
-    def __init__(self, x, y, alive):
-        super().__init__(x, y, alive)
-        self.type = "Erbast"
-
-    def __str__(self):
-        return "Erbast at ({}, {}) is {}".format(self.x, self.y, "alive" if self.alive else "dead")
-
-    def __repr__(self):
-        return "Erbast at ({}, {}) is {}".format(self.x, self.y, "alive" if self.alive else "dead")
-
-class Carviz(Cell):
-    def __init__(self, x, y, alive):
-        super().__init__(x, y, alive)
-        self.type = "Carviz"
-
-    def __str__(self):
-        return "Carviz at ({}, {}) is {}".format(self.x, self.y, "alive" if self.alive else "dead")
-
-    def __repr__(self):
-        return "Carviz at ({}, {}) is {}".format(self.x, self.y, "alive" if self.alive else "dead")
+class Carviz:
+    def __init__(self,energy,lifetime,age,socialAttitude,vegetobDensity = 0):
+        self.energy = energy 
+        self.lifetime = lifetime 
+        self.age = age # 0-lifetime
+        self.socialAttitude = socialAttitude # 0-1
