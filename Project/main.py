@@ -9,12 +9,20 @@ class Cell:
         self.y = y
         self.cell_type = cell_type # water or land
         self.vegetobDensity = vegetobDensity # 0-100
-        self.herd = []
-        self.pride = []
+        self.herd = np.empty(0,dtype=object)
+        self.pride = np.empty(0,dtype=object)
     #when cast to int retun the vegetobDensity
-    def __int__(self):
-        return self.vegetobDensity
+    # def __int__(self):
+    #     return np.dstack((self.vegetobDensity,len(self.herd),len(self.pride)))
     
+    def __str__(self):
+        return f"Cell({self.x},{self.y},{self.cell_type},{self.vegetobDensity})"
+    
+    def Rgb(self):
+        if self.cell_type == "water":
+            return [0,0,255]
+        else:
+            return [len(self.pride),len(self.herd),self.vegetobDensity]
 
 #main 
 def main():
@@ -23,13 +31,21 @@ def main():
 
     for i in range(planisuss_constants.NUMCELLS):
         for j in range(planisuss_constants.NUMCELLS):
-            cell_grid[i][j] = Cell(i,j,"land",np.random.randint(0,100))
+            #make the border cells water (-1) and the rest land (0-100)
+            if i == 0 or i == planisuss_constants.NUMCELLS-1 or j == 0 or j == planisuss_constants.NUMCELLS-1:
+                cell_grid[i][j] = Cell(i,j,"water",-1)
+            else:
+                cell_grid[i][j] = Cell(i,j,"land",np.random.randint(0,100))
+            
+    #map cell_grid every cell to a rgb value numpy map
+    rgb_grid = np.empty((planisuss_constants.NUMCELLS,planisuss_constants.NUMCELLS,3))
+    for i in range(planisuss_constants.NUMCELLS):
+        for j in range(planisuss_constants.NUMCELLS):
+            rgb_grid[i][j] = cell_grid[i][j].Rgb()
     
-    
-    #print(cell_grid.astype(int))
-    plt.imshow(cell_grid.astype(int))
-    # # plt.yticks(np.arange(0, planisuss_constants.NUMCELLS, 1))
+    plt.imshow(rgb_grid)
     plt.colorbar()
+
     plt.show()
 
 if __name__ == "__main__":
