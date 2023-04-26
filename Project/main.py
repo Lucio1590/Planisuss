@@ -18,6 +18,8 @@ class Cell:
     def __str__(self):
         return f"Cell({self.x},{self.y},{self.cell_type},{self.vegetobDensity})"
     
+    def __int__(self):
+        return self.vegetobDensity
     def Rgb(self):
         if self.cell_type == "water":
             return [0,0,255]
@@ -38,14 +40,14 @@ def main():
                 cell_grid[i][j] = Cell(i,j,"land",np.random.randint(0,100))
             
     #map cell_grid every cell to a rgb value numpy map
-    rgb_grid = np.empty((planisuss_constants.NUMCELLS,planisuss_constants.NUMCELLS,3))
-    for i in range(planisuss_constants.NUMCELLS):
-        for j in range(planisuss_constants.NUMCELLS):
-            rgb_grid[i][j] = cell_grid[i][j].Rgb()
+    # rgb_grid = np.empty((planisuss_constants.NUMCELLS,planisuss_constants.NUMCELLS,3))
+    # for i in range(planisuss_constants.NUMCELLS):
+    #     for j in range(planisuss_constants.NUMCELLS):
+    #         rgb_grid[i][j] = cell_grid[i][j].Rgb()
     
-    plt.imshow(rgb_grid)
+    plt.imshow(cell_grid.astype(int), cmap='Greens')
     plt.colorbar()
-
+ 
     plt.show()
 
 if __name__ == "__main__":
