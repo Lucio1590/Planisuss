@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import animation    
 from utils import normalize_matrix
 import planisuss_constants
 
@@ -47,14 +48,54 @@ def main():
     #         rgb_grid[i][j] = cell_grid[i][j].Rgb()
     
     
-    rgb_grid = np.array([[cell_grid[i][j].RGB() for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)])
+    # rgb_grid = np.array([[cell_grid[i][j].RGB() for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)])
 
-    plt.imshow(rgb_grid.astype(np.uint8))
-    # print rgb_grid.astype(np.uint8) in readable format
-    print(np.array2string(rgb_grid.astype(np.uint8), separator=', '))
-    plt.colorbar()
+    # plt.imshow(rgb_grid.astype(np.uint8))
+    # plt.colorbar()
  
+    # plt.show()
+
+    #update the vegetobDensity of each cell
+    for i in range(planisuss_constants.NUMCELLS):
+        for j in range(planisuss_constants.NUMCELLS):
+            cell_grid[i][j].vegetobDensity += planisuss_constants.GROWING
+            if cell_grid[i][j].vegetobDensity > 100:
+                cell_grid[i][j].vegetobDensity = 100
+    
+    
+    # def update_plot():
+    #     for i in range(planisuss_constants.NUMCELLS):
+    #         for j in range(planisuss_constants.NUMCELLS):
+    #             cell_grid[i][j].vegetobDensity += planisuss_constants.GROWING
+    #             if cell_grid[i][j].vegetobDensity > 100:
+    #                 cell_grid[i][j].vegetobDensity = 100
+    #     im.set_data(np.array([[cell_grid[i][j].RGB() for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)]))
+    #     return im
+    
+    def update(frame):
+        for i in range(planisuss_constants.NUMCELLS):
+            for j in range(planisuss_constants.NUMCELLS):
+                cell_grid[i][j].vegetobDensity += planisuss_constants.GROWING
+                if cell_grid[i][j].vegetobDensity > 100:
+                    cell_grid[i][j].vegetobDensity = 100
+        im.set_data(np.array([[cell_grid[i][j].RGB() for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)]).astype(np.uint8))
+        return [im]
+
+    rgb_grid = np.array([[cell_grid[i][j].RGB() for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)])
+    #animate plot
+    # plt.imshow(updated_rgb_grid.astype(np.uint8))
+    fig, ax = plt.subplots()
+
+# Display the matrix as an image
+    im = ax.imshow(rgb_grid)
+
+
+    anim = animation.FuncAnimation(fig, update, frames=100, interval=10, blit=True)
+
     plt.show()
+   
+
+        
 
 if __name__ == "__main__":
     main()
