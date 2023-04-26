@@ -17,7 +17,7 @@ Stefano Ferrari
 NUMDAYS = 100000     # Length of the simulation in days
 
 # geometry
-NUMCELLS = 100     # size of the (square) grid (NUMCELLS x NUMCELLS)
+NUMCELLS = 5     # size of the (square) grid (NUMCELLS x NUMCELLS)
 NUMCELLS_R = 100    # number of rows of the (potentially non-square) grid
 NUMCELLS_C = 100    # number of columns of the (potentially non-square) grid
 
@@ -43,3 +43,5 @@ AGING_E = 1          # energy lost each month for Erbast
 AGING_C = 1          # energy lost each month for Carviz
 
 GROWING = 1          # Vegetob density that grows per day.
+HUNGER = 1           # energy lost each day for Erbast and Carviz
+

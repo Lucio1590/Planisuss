@@ -1,64 +1,80 @@
+# Import the necessary libraries
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import animation    
-from utils import normalize_matrix
+from matplotlib import animation
 import planisuss_constants
+from Cells import Cell
+from matplotlib.widgets import Button
 
-class Cell:
-    def __init__(self,x,y,cell_type,vegetobDensity,herdDimension=0,prideDimension=0):
-        self.x = x
-        self.y = y
-        self.cell_type = cell_type # water or land
-        self.vegetobDensity = vegetobDensity # 0-100
-        self.herd = np.empty(herdDimension,dtype=object)
-        self.pride = np.empty(prideDimension,dtype=object)
-    #when cast to int retun the vegetobDensity
-    # def __int__(self):
-    #     return np.dstack((self.vegetobDensity,len(self.herd),len(self.pride)))
-    
-    def __str__(self):
-        return f"Cell({self.x},{self.y},{self.cell_type},{self.vegetobDensity})"
-    
-    def __int__(self):
-        return self.vegetobDensity
+# Create the cell grid
+cell_grid = np.empty((planisuss_constants.NUMCELLS,planisuss_constants.NUMCELLS),dtype=Cell)
+# Populate the cell grid with cells
+for i in range(planisuss_constants.NUMCELLS):
+    for j in range(planisuss_constants.NUMCELLS):
+        if i == 0 or i == planisuss_constants.NUMCELLS-1 or j == 0 or j == planisuss_constants.NUMCELLS-1:
+            cell_grid[i][j] = None
 
-    def RGB(self):
-        if self.cell_type == "water":
-            return [0,0,255]
         else:
-            return [len(self.pride)/10*255,len(self.herd)/10*255,self.vegetobDensity/100*255]
+            cell_grid[i][j] = Cell(i,j,"land",np.random.randint(0,100),np.random.randint(0,10),np.random.randint(0,10))
 
-def main():
-    cell_grid = np.empty((planisuss_constants.NUMCELLS,planisuss_constants.NUMCELLS),dtype=Cell)
-
-    for i in range(planisuss_constants.NUMCELLS):
-        for j in range(planisuss_constants.NUMCELLS):
-            if i == 0 or i == planisuss_constants.NUMCELLS-1 or j == 0 or j == planisuss_constants.NUMCELLS-1:
-                cell_grid[i][j] = Cell(i,j,"water",-1)
-            else:
-                cell_grid[i][j] = Cell(i,j,"land",np.random.randint(0,100),np.random.randint(0,10),np.random.randint(0,10))
-    
-
-    for i in range(planisuss_constants.NUMCELLS):
-        for j in range(planisuss_constants.NUMCELLS):
+# Initialise the animal populations
+for i in range(planisuss_constants.NUMCELLS):
+    for j in range(planisuss_constants.NUMCELLS):
+        if cell_grid[i][j] is not None: # check only land cells
             cell_grid[i][j].vegetobDensity += planisuss_constants.GROWING
             if cell_grid[i][j].vegetobDensity > 100:
                 cell_grid[i][j].vegetobDensity = 100
-    
-    def update(frame):
-        for i in range(planisuss_constants.NUMCELLS):
-            for j in range(planisuss_constants.NUMCELLS):
-                cell_grid[i][j].vegetobDensity = np.random.randint(0,100)
-                cell_grid[i][j].herd = np.empty(np.random.randint(0,10),dtype=object)
-                cell_grid[i][j].pride = np.empty(np.random.randint(0,10),dtype=object)        
-        im.set_data(np.array([[cell_grid[i][j].RGB() for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)]).astype(np.uint8))
-        return [im]
+        
 
-    rgb_grid = np.array([[cell_grid[i][j].RGB() for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)])
-    fig, ax = plt.subplots()
-    im = ax.imshow(rgb_grid)
-    animation.FuncAnimation(fig, update, frames=100, interval=100, blit=True)
-    plt.show()
-   
-if __name__ == "__main__":
-    main()
+# Create the function that will be called to update the display
+def update(frame):
+    # Update the animal populations
+    print(frame)
+    for i in range(planisuss_constants.NUMCELLS):
+        for j in range(planisuss_constants.NUMCELLS):
+            if cell_grid[i][j] is not None: # check only land cells
+                # Update the vegetob density
+                cell_grid[i][j].vegetobDensity += planisuss_constants.GROWING
+                if cell_grid[i][j].vegetobDensity > 100:
+                    cell_grid[i][j].vegetobDensity = 100
+                # cell_grid[i][j].vegetobDensity -= len(cell_grid[i][j].herd)
+                # check cell neighbours
+                print(i,j)
+                print("------------------------------------------------------------------------------------")
+                neighbours = cell_grid[i-1:i+2,j-1:j+2] # get neighbours
+                neighbours = neighbours[neighbours != cell_grid[i,j]] # remove self
+                # remove water cells
+                neighbours = neighbours[np.vectorize(lambda x: x != None)(neighbours)]
+                for n in neighbours:
+                    print(n)
+                print("------------------------------------------------------------------------------------")
+           
+    # Update the display
+    im.set_data(np.array([[cell_grid[i][j].RGB() if cell_grid[i][j] is not None else [0,0,0] for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)]).astype(np.uint8))
+    return [im]
+
+# Create the display
+
+#rgb_grid = np.array([[cell_grid[i][j].RGB() for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)]) # get the RGB values for each cell in the grid and store them in a numpy array
+
+
+# get the RGB values for each cell in the grid and store them in a numpy array and convert the empty cells to black
+rgb_grid = np.array([[cell_grid[i][j].RGB() if cell_grid[i][j] is not None else [0,0,0] for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)]).astype(np.uint8)
+
+fig, ax = plt.subplots()
+im = ax.imshow(rgb_grid)
+
+anim = animation.FuncAnimation(fig, update, frames=1, interval=1000, blit=True)
+
+
+
+ax_pause = plt.axes([0.8, 0, 0.20, 0.085]) # type: ignore
+bpause = Button(ax_pause, 'Stop')
+
+def pause(event):
+    anim.pause()
+        
+
+bpause.on_clicked(pause)
+
+plt.show()
