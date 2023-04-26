@@ -75,9 +75,10 @@ def main():
     def update(frame):
         for i in range(planisuss_constants.NUMCELLS):
             for j in range(planisuss_constants.NUMCELLS):
-                cell_grid[i][j].vegetobDensity += planisuss_constants.GROWING
-                if cell_grid[i][j].vegetobDensity > 100:
-                    cell_grid[i][j].vegetobDensity = 100
+                cell_grid[i][j].vegetobDensity = np.random.randint(0,100)
+                cell_grid[i][j].herd = np.empty(np.random.randint(0,10),dtype=object)
+                cell_grid[i][j].pride = np.empty(np.random.randint(0,10),dtype=object)
+                
         im.set_data(np.array([[cell_grid[i][j].RGB() for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)]).astype(np.uint8))
         return [im]
 
@@ -90,7 +91,7 @@ def main():
     im = ax.imshow(rgb_grid)
 
 
-    anim = animation.FuncAnimation(fig, update, frames=100, interval=10, blit=True)
+    anim = animation.FuncAnimation(fig, update, frames=100, interval=100, blit=True)
 
     plt.show()
    
