@@ -25,6 +25,9 @@ for i in range(planisuss_constants.NUMCELLS):
             if cell_grid[i][j].vegetobDensity > 100:
                 cell_grid[i][j].vegetobDensity = 100
         
+def gridToRgbArrey(grid):
+    return np.array([[grid[i][j].RGB() if grid[i][j] is not None else [0,0,0] for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)]).astype(np.uint8)
+
 
 # Create the function that will be called to update the display
 def update(frame):
@@ -37,7 +40,15 @@ def update(frame):
                 cell_grid[i][j].vegetobDensity += planisuss_constants.GROWING
                 if cell_grid[i][j].vegetobDensity > 100:
                     cell_grid[i][j].vegetobDensity = 100
-                # cell_grid[i][j].vegetobDensity -= len(cell_grid[i][j].herd)
+                cell_grid[i][j].vegetobDensity -= len(cell_grid[i][j].herd)
+                if cell_grid[i][j].vegetobDensity < 0:
+                    cell_grid[i][j].vegetobDensity = 0
+                    cell_grid[i][j].herd = np.empty(0,dtype=object) # kill all the animals in the cell
+                    cell_grid[i][j].pride = np.empty(0,dtype=object) # kill all the animals in the cell
+
+                
+                cell_grid[i][j].herd = np.empty(np.random.randint(0,10),dtype=object)
+                cell_grid[i][j].pride = np.empty(np.random.randint(0,10),dtype=object)
                 # check cell neighbours
                 print(i,j)
                 print("------------------------------------------------------------------------------------")
@@ -50,7 +61,7 @@ def update(frame):
                 print("------------------------------------------------------------------------------------")
            
     # Update the display
-    im.set_data(np.array([[cell_grid[i][j].RGB() if cell_grid[i][j] is not None else [0,0,0] for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)]).astype(np.uint8))
+    im.set_data(gridToRgbArrey(cell_grid))
     return [im]
 
 # Create the display
@@ -59,7 +70,7 @@ def update(frame):
 
 
 # get the RGB values for each cell in the grid and store them in a numpy array and convert the empty cells to black
-rgb_grid = np.array([[cell_grid[i][j].RGB() if cell_grid[i][j] is not None else [0,0,0] for j in range(planisuss_constants.NUMCELLS)] for i in range(planisuss_constants.NUMCELLS)]).astype(np.uint8)
+rgb_grid = gridToRgbArrey(cell_grid)
 
 fig, ax = plt.subplots()
 im = ax.imshow(rgb_grid)
