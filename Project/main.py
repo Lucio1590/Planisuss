@@ -5,17 +5,21 @@ from matplotlib import animation
 import planisuss_constants
 from Cells import Cell
 from matplotlib.widgets import Button
+from perlin_noise import PerlinNoise
+
 
 # Create the cell grid
 cell_grid = np.empty((planisuss_constants.NUMCELLS,planisuss_constants.NUMCELLS),dtype=Cell)
+noise = PerlinNoise(octaves=planisuss_constants.NUMCELLS/10, seed=np.random.randint(0,100))
+pix = planisuss_constants.NUMCELLS
+noise_map = [[int((noise([i/pix, j/pix])+1)*25) for j in range(pix)] for i in range(pix)]
 # Populate the cell grid with cells
 for i in range(planisuss_constants.NUMCELLS):
     for j in range(planisuss_constants.NUMCELLS):
         if i == 0 or i == planisuss_constants.NUMCELLS-1 or j == 0 or j == planisuss_constants.NUMCELLS-1:
             cell_grid[i][j] = None
-
         else:
-            cell_grid[i][j] = Cell(i,j,"land",np.random.randint(0,100),np.random.randint(0,10),np.random.randint(0,10))
+            cell_grid[i][j] = Cell(i,j,"land",noise_map[i][j],np.random.randint(0,10),np.random.randint(0,10))
 
 # Initialise the animal populations
 for i in range(planisuss_constants.NUMCELLS):
@@ -37,28 +41,29 @@ def update(frame):
         for j in range(planisuss_constants.NUMCELLS):
             if cell_grid[i][j] is not None: # check only land cells
                 # Update the vegetob density
-                cell_grid[i][j].vegetobDensity += planisuss_constants.GROWING
-                if cell_grid[i][j].vegetobDensity > 100:
-                    cell_grid[i][j].vegetobDensity = 100
-                cell_grid[i][j].vegetobDensity -= len(cell_grid[i][j].herd)
-                if cell_grid[i][j].vegetobDensity < 0:
-                    cell_grid[i][j].vegetobDensity = 0
-                    cell_grid[i][j].herd = np.empty(0,dtype=object) # kill all the animals in the cell
-                    cell_grid[i][j].pride = np.empty(0,dtype=object) # kill all the animals in the cell
+                cell = cell_grid[i][j]
+                cell.vegetobDensity += planisuss_constants.GROWING
+                if cell.vegetobDensity > 100:
+                    cell.vegetobDensity = 100
+                cell.vegetobDensity -= len(cell_grid[i][j].herd)
+                if cell.vegetobDensity < 0:
+                    cell.vegetobDensity = 0
+                    cell.herd = np.empty(0,dtype=object) # kill all the animals in the cell
+                    cell.pride = np.empty(0,dtype=object) # kill all the animals in the cell
 
                 
-                cell_grid[i][j].herd = np.empty(np.random.randint(0,10),dtype=object)
-                cell_grid[i][j].pride = np.empty(np.random.randint(0,10),dtype=object)
+                cell.herd = np.empty(np.random.randint(0,10),dtype=object)
+                cell.pride = np.empty(np.random.randint(0,10),dtype=object)
                 # check cell neighbours
-                print(i,j)
-                print("------------------------------------------------------------------------------------")
-                neighbours = cell_grid[i-1:i+2,j-1:j+2] # get neighbours
-                neighbours = neighbours[neighbours != cell_grid[i,j]] # remove self
-                # remove water cells
-                neighbours = neighbours[np.vectorize(lambda x: x != None)(neighbours)]
-                for n in neighbours:
-                    print(n)
-                print("------------------------------------------------------------------------------------")
+                # print(i,j)
+                # print("------------------------------------------------------------------------------------")
+                # neighbours = cell_grid[i-1:i+2,j-1:j+2] # get neighbours
+                # neighbours = neighbours[neighbours != cell] # remove self
+                # # remove water cells
+                # neighbours = neighbours[np.vectorize(lambda x: x != None)(neighbours)]
+                # for n in neighbours:
+                #     print(n)
+                # print("------------------------------------------------------------------------------------")
            
     # Update the display
     im.set_data(gridToRgbArrey(cell_grid))

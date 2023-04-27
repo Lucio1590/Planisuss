@@ -22,6 +22,8 @@ class Cell:
             return [0,0,255]
         else:
             return [len(self.pride)/10*255,len(self.herd)/10*255,self.vegetobDensity/100*255]
+    def Green(self):
+        return self.vegetobDensity/100*255
         
 class Erbast:
     def __init__(self,energy,lifetime,age,socialAttitude,vegetobDensity = 0):
