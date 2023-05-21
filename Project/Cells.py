@@ -1,18 +1,18 @@
 import numpy as np
 class Cell:
-    def __init__(self,x,y,cell_type,vegetobDensity,herdDimension=0,prideDimension=0):
+    def __init__(self,x,y,cell_type,vegetobDensity):
         self.x = x
         self.y = y
         self.cell_type = cell_type # water or land
         self.vegetobDensity = vegetobDensity # 0-100
-        self.herd = np.empty(herdDimension,dtype=object)
-        self.pride = np.empty(prideDimension,dtype=object)
+        self.herd = np.empty(0,dtype=Erbast)
+        self.pride = np.empty(0,dtype=Carviz)
     #when cast to int retun the vegetobDensity
     # def __int__(self):
     #     return np.dstack((self.vegetobDensity,len(self.herd),len(self.pride)))
     
     def __str__(self):
-        return f"Cell({self.x},{self.y},herd:{len(self.herd)}, pride:{len(self.pride)} ,{self.vegetobDensity})"
+        return f"{self.x},{self.y}-{len(self.herd)}"
     
     def __int__(self):
         return self.vegetobDensity
@@ -26,14 +26,14 @@ class Cell:
         return self.vegetobDensity/100*255
         
 class Erbast:
-    def __init__(self,energy,lifetime,age,socialAttitude,vegetobDensity = 0):
+    def __init__(self,energy,lifetime,age,socialAttitude):
         self.energy = energy 
         self.lifetime = lifetime 
         self.age = age # 0-lifetime
         self.socialAttitude = socialAttitude # 0-1
 
 class Carviz:
-    def __init__(self,energy,lifetime,age,socialAttitude,vegetobDensity = 0):
+    def __init__(self,energy,lifetime,age,socialAttitude):
         self.energy = energy 
         self.lifetime = lifetime 
         self.age = age # 0-lifetime
